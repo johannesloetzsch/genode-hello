@@ -3,5 +3,8 @@
 
 void Component::construct(Genode::Env &)
 {
-    Genode::log("Hello world");
+    while(true) {
+	Genode::log("Hello world");
+	Genode::log("press Ctrl+A X to quit qemu\n");
+    }
 }
