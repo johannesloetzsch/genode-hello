@@ -22,9 +22,29 @@
 
   in {
     packages.${system} = rec {
-      default = genode_bash_hello;
 
-      genode_bash_hello = genodeEnv.mkDerivation {
+      genode_hello = genodeEnv.mkDerivation {
+        name = "hello.iso";
+
+        repos = [
+          ./.
+        ];
+
+        buildInputs = with genode-utils.packages.${system}; [
+          grub2
+          nova
+        ];
+
+        buildPhase = ''
+          make run/hello
+        '';
+
+        installPhase = ''
+          cp var/run/hello.iso $out
+        '';
+      };
+
+      genode_bash = genodeEnv.mkDerivation {
         name = "bash.iso";
 
         repos = [
@@ -34,10 +54,8 @@
         buildInputs = with genode-utils.packages.${system}; [
           grub2
           nova
-
           bash
-            jitterentropy libc linux x86emu
-
+          jitterentropy libc linux x86emu
         ] ++ (with pkgs; [
           mawk
           gperf
@@ -46,8 +64,6 @@
 
         buildPhase = ''
           $GENODE_DIR/tool/ports/prepare_port coreutils ncurses stb ttf-bitstream-vera vim
-
-          make app/hello
           make run/bash
         '';
 
@@ -56,7 +72,8 @@
         '';
       };
 
-      genode-pkgs = genode-utils.packages.${system};
+      #default = genode_bash_hello;
+      #genode-pkgs = genode-utils.packages.${system};
     };
   };
 }
